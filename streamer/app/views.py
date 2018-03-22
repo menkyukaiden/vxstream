@@ -1,5 +1,6 @@
 import json
 from logging import getLogger
+from time import sleep
 
 from celery import task, current_task
 from celery.result import AsyncResult
@@ -12,7 +13,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
-from time import sleep
 
 from app.forms import InterfaceConfigurationForm
 from app.models import Transponders
@@ -76,7 +76,6 @@ def channels(request):
 
     context = {
         'title': 'Channels list',
-        'extra_text': 'Some examples to get you started2',
         'channels': dict,
         'frequencies': freq_list
     }
