@@ -1,0 +1,165 @@
+<!-- Scan modal -->
+<div  id="config-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <form id="interface-config-form" class="config-form form-horizontal form-label-left input_mask" method="post">
+        <div class="modal-dialog modal-sl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel2">Interface configuration</h4>
+                </div>
+                <div class="modal-body">
+
+                    <h2 role="separator" class="divider">Preset satellite</h2>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Satellite</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control interface-scan-select" tabindex="-1">
+                                <option value="default">None</option>
+                                {% for tr in transponders %}
+                                <option value="{{tr}}">{{tr}}</option>
+                                {% endfor%}
+                            </select>
+                        </div>
+                    </div>
+                    <h2 role="separator" class="divider">Custom configuration</h2>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Satellite name</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control disable-default-ffj" placeholder="Ex: Astra">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Delivery System</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                                <option></option>
+                                <option selected value="DVBS">DVB-S</option>
+                                <option value="DVBS2">DVB-S2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Frequency (KHz)</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control disable-default-ffj" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Symbol Rate (Sym/s)</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control disable-default-ffj" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Polarisation</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                                <option></option>
+                                <option value="H">Horizontal</option>
+                                <option value="V">Vertical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Modulation</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                                <option></option>
+                                <option selected value="AUTO">AUTO</option>
+                                <option value="QPSK">QPSK</option>
+                                <option value="QPAM">QPAM/16</option>
+                                <option value="PSK8">PSK/8</option>
+                                <option value="16APSK">16APSK</option>
+                                <option value="32APSK">32APSK</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">FEC</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                                <option></option>
+                                <option selected value="AUTO">AUTO</option>
+                                <option value="NONE">NONE</option>
+                                <option value="1_2">1/2</option>
+                                <option value="2_3">2/3</option>
+                                <option value="3_4">3/4</option>
+                                <option value="4_5">4/5</option>
+                                <option value="5_6">5/6</option>
+                                <option value="6_7">6/7</option>
+                                <option value="7_8">7/8</option>
+                                <option value="8_9">8/9</option>
+                                <option value="9_10">9/10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Rolloff</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                                <option></option>
+                                <option value="35">35</option>
+                                <option value="20">20</option>
+                                <option value="25">25</option>
+                                <option selected value="AUTO">AUTO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">Pilot</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                                <option></option>
+                                <option selected value="AUTO">AUTO</option>
+                                <option value="ON">ON</option>
+                                <option value="OFF">OFF</option>
+                            </select>
+                        </div>
+                    </div>
+                    <h2 role="separator" class="divider">LNB Configuration</h2>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">LNB type</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <select class="select2_single form-control" id="lnb_type" tabindex="-1">
+                                <option selected value="universal" default>Universal</option>
+                                <option value="standard">Standard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof_standard (MHz)</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control lnb_lof_standard" placeholder="Default: 10750">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof (MHz)</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control lnb_disable" placeholder="Default: 11700">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof_low (MHz)</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control lnb_disable" placeholder="Default: 9750">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof_high (MHz)</label>
+                        <div class="col-md-8 col-sm-9 col-xs-12">
+                            <input type="text" class="form-control lnb_disable" placeholder="Default: 10600">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- /modals -->

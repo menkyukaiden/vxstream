@@ -1,0 +1,28 @@
+<!-- Scan modal -->
+<div  id="stop-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <form class="stop-form form-horizontal form-label-left input_mask">
+        <div class="modal-dialog modal-sl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel2">Are you sure?</h4>
+                </div>
+                <div class="modal-body">
+                <p>Are you sure</p>
+                    <form method="post" >
+                    {% csrf_token %}
+                    {{form}}
+                    </form>
+<button type="submit" class="btn btn-default"&gt;Submit</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-info">Stop streaming</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+<!-- /modals -->

@@ -1,0 +1,205 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Fixed Sidebar {% endblock title %}
+
+{% block stylesheets %}
+{{ block.super }}
+<!-- jQuery custom content scroller -->
+<link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+<link href="/static/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+<link href="/static/vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+<link href="/static/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="">
+
+        <div class="row top_tiles">
+            <h1>Interface</h1>
+            <h4>Manage DVB interfaces</h4>
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats">
+                    <div class="icon"><i class="fa fa-youtube-play"></i></div>
+                    <span class="label label-success">Streaming</span>
+
+                    <div class="count">#1. DVB S2 DUAL</div>
+                    <h3>Apstar6_C-134.0E</h3>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="ln_solid"></div>
+                        <button type="button" class="btn btn-info" data-target="#config-modal" data-toggle="modal"><i class="fa fa-folder"></i> Config</button>
+
+                        <button type="button" class="btn btn-primary" data-target="#scan-modal" data-toggle="modal"><i class="fa fa-caret-square-o-right"></i> Scan</button>
+
+                        <button type="button" class="btn btn-dark" data-target="#stream-modal" data-toggle="modal"><i class="fa fa-video-camera"></i> Stream</button>
+                        <button type="button" class="btn btn-danger" data-target="#stop-modal" data-toggle="modal"><i class="fa fa-times-circle"></i> Stop</button>
+                    </div>
+                </div>
+                <!-- Scan modal -->
+                {% include 'app/scan_modal.html' %}
+
+                <!-- Config modal -->
+                {% include 'app/config_modal.html' %}
+
+                <!-- Stream modal -->
+                {% include 'app/stream_modal.html' %}
+
+                <!-- Stop modal -->
+                {% include 'app/stop_modal.html' %}
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+{{ block.super }}
+<!-- jQuery custom content scroller -->
+<script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- PNotify -->
+<script src="/static/vendors/pnotify/dist/pnotify.js"></script>
+<script src="/static/vendors/pnotify/dist/pnotify.buttons.js"></script>
+<script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+<script>
+$(document).ready(function(){
+    /***************************************************************************************/
+    $('.start-scan-button').prop('disabled', true);
+    $('.disable-default-ffj').prop('required', true);
+    $('.interface-scan-select').on('change', function(){
+        var value = $(this).val();
+        console.log(value);
+        if (value == "default"){
+            $('.disable-default-ffj').prop('disabled', false);
+            $('.disable-default-ffj').prop('required', true);
+        }else{
+            $('.disable-default-ffj').prop('disabled', true);
+            $('.start-scan-button').prop('disabled', false);
+        }
+    });
+
+    var $myscanform = $(".scan-form")
+    $myscanform.submit(function(evt){
+        evt.preventDefault()
+        var $formdata = $(this).serialize()
+        var $thisURL = $myscanform.attr("data-url") || window.location.href
+        console.log($formdata)
+        console.log($thisURL)
+
+        var text = 'Start Scanning on ';
+        text += $( ".select2_single option:selected" ).val();
+        console.log(text);
+        new PNotify({
+            title: 'Start Scanning on '+$( ".select2_single option:selected" ).val(),
+            text: text,
+            type: 'success',
+            styling: 'bootstrap3'
+        });
+
+        $('.start-scan-button').text('Started')
+        $('.start-scan-button').prop('disabled', true)
+        $('.modal').on('hidden', function(){
+            $(this).data('modal', null);
+        });
+    });
+
+    $('.start-scan-button-first').on('click', function(){
+        $('.start-scan-button').text('Start')
+    });
+
+    /**************************************   config-form   **************************************/
+    var $myscanform = $(".config-form")
+    $myscanform.submit(function(evt){
+        evt.preventDefault()
+        var $formdata = $(this).serialize()
+        var $thisURL = $myscanform.attr("data-url") || window.location.href
+        console.log($formdata)
+        console.log($thisURL)
+
+        var text = 'Configuration saved ';
+        text += $( ".select2_single option:selected" ).val();
+        console.log(text);
+        new PNotify({
+            title: 'configuration saved',
+            text: text,
+            type: 'success',
+            styling: 'bootstrap3'
+        });
+
+        $('.start-scan-button').text('Started')
+        $('.start-scan-button').prop('disabled', true)
+        $('.modal').on('hidden', function(){
+            $(this).data('modal', null);
+        });
+    });
+
+    $('.start-scan-button-first').on('click', function(){
+        $('.start-scan-button').text('Start')
+    });
+
+    /**********************************     LNB    *******************************************/
+    $('.lnb_disable').prop('disabled', true);
+    $('#lnb_type').on('change', function(){
+        var value = $(this).val();
+        console.log(value);
+        if (value == "universal"){
+            $('.lnb_disable').prop('disabled', true);
+            $('.lnb_lof_standard').prop('disabled', false);
+
+            lnb_lof_standard
+        }else{
+            $('.lnb_disable').prop('disabled', false);
+            $('.lnb_lof_standard').prop('disabled', true);
+        }
+    });
+
+        /* config form */
+    var frm = $('#interface-config-form');
+    frm.submit(function () {
+
+    $.post("{% url 'post_config_ajax' %}", {'config': frm.serialize(), 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(data) {
+        new PNotify({
+         title: 'DVB interfaces',
+         text: 'The Transponder was deleted',
+         type: 'danger',
+         styling: 'bootstrap3'
+        });
+    });
+
+    });
+
+
+
+});
+
+
+    /* modal */
+    $( '.modal' )
+       .on('hide.bs.modal', function() {
+           $('.interface-scan-select').prop('selectedIndex',0);
+           $(this).data('modal', null);
+            //console.log("xxxxxxxxxxxxx");
+       })
+       .on('hidden.bs.modal', function(){
+           //console.log('hidden');
+       })
+       .on('show.bs.modal', function() {
+           //console.log('show');
+           $('.disable-default-ffj').prop('disabled', false);
+           $('.start-scan-button').prop('disabled', true);
+
+       })
+       .on('shown.bs.modal', function(){
+          //console.log('shown' );
+       });
+
+
+
+
+
+
+</script>
+{% endblock javascripts %}
