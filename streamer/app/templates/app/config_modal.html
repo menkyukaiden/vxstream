@@ -1,6 +1,7 @@
 <!-- Scan modal -->
 <div  id="config-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <form id="interface-config-form" class="config-form form-horizontal form-label-left input_mask" method="post">
+<form id="interface-config-form" class="config-form form-horizontal form-label-left input_mask" method="post">
+        {% csrf_token %}
         <div class="modal-dialog modal-sl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -14,25 +15,27 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Satellite</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control interface-scan-select" tabindex="-1">
+
+                            <select class="select2_single form-control interface-scan-select" id="satellitesselect" name="satellitesselect" tabindex="-1">
                                 <option value="default">None</option>
-                                {% for tr in transponders %}
+                                {% for tr in satellites %}
                                 <option value="{{tr}}">{{tr}}</option>
                                 {% endfor%}
                             </select>
                         </div>
                     </div>
+                    <div class="custom-configuration">
                     <h2 role="separator" class="divider">Custom configuration</h2>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Satellite name</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control disable-default-ffj" placeholder="Ex: Astra">
+                            <input type="text" class="form-control disable-default-ffj" id="satellitesinput" name="satellitesinput" placeholder="Ex: Astra">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Delivery System</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1" id="deliverysystemselect" name="deliverysystemselect">
                                 <option></option>
                                 <option selected value="DVBS">DVB-S</option>
                                 <option value="DVBS2">DVB-S2</option>
@@ -42,19 +45,19 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Frequency (KHz)</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control disable-default-ffj" placeholder="0">
+                            <input type="text" class="form-control disable-default-ffj" placeholder="0" id="frequencyinput" name="frequencyinput">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Symbol Rate (Sym/s)</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control disable-default-ffj" placeholder="0">
+                            <input type="text" class="form-control disable-default-ffj" placeholder="0" id="symrateinput" name="symrateinput">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Polarisation</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1" id="polarizationselect" name="polarizationselect">
                                 <option></option>
                                 <option value="H">Horizontal</option>
                                 <option value="V">Vertical</option>
@@ -64,7 +67,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Modulation</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1" id="modulationselect" name="modulationselect">
                                 <option></option>
                                 <option selected value="AUTO">AUTO</option>
                                 <option value="QPSK">QPSK</option>
@@ -78,7 +81,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">FEC</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1" id="fecselect" name="fecselect">
                                 <option></option>
                                 <option selected value="AUTO">AUTO</option>
                                 <option value="NONE">NONE</option>
@@ -97,7 +100,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Rolloff</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1" id="rolloffselect" name="rolloffselect">
                                 <option></option>
                                 <option value="35">35</option>
                                 <option value="20">20</option>
@@ -109,7 +112,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">Pilot</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control disable-default-ffj" tabindex="-1">
+                            <select class="select2_single form-control disable-default-ffj" tabindex="-1" id="pilotselect" name="pilotselect">
                                 <option></option>
                                 <option selected value="AUTO">AUTO</option>
                                 <option value="ON">ON</option>
@@ -117,11 +120,12 @@
                             </select>
                         </div>
                     </div>
+                    </div>
                     <h2 role="separator" class="divider">LNB Configuration</h2>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">LNB type</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <select class="select2_single form-control" id="lnb_type" tabindex="-1">
+                            <select class="select2_single form-control" tabindex="-1" id="lnbtypeselect" name="lnbtypeselect">
                                 <option selected value="universal" default>Universal</option>
                                 <option value="standard">Standard</option>
                             </select>
@@ -130,25 +134,25 @@
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof_standard (MHz)</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control lnb_lof_standard" placeholder="Default: 10750">
+                            <input type="text" class="form-control lnb_lof_standard" placeholder="Default: 10750" id="lnblofstandardinput" name="lnblofstandardinput">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof (MHz)</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control lnb_disable" placeholder="Default: 11700">
+                            <input type="text" class="form-control lnb_disable" placeholder="Default: 11700" id="lnblofinput" name="lnblofinput">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof_low (MHz)</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control lnb_disable" placeholder="Default: 9750">
+                            <input type="text" class="form-control lnb_disable" placeholder="Default: 9750" id="lnbloflowinput" name="lnbloflowinput">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-4 col-sm-3 col-xs-12">lnb_lof_high (MHz)</label>
                         <div class="col-md-8 col-sm-9 col-xs-12">
-                            <input type="text" class="form-control lnb_disable" placeholder="Default: 10600">
+                            <input type="text" class="form-control lnb_disable" placeholder="Default: 10600" id="lnblofhighinput" name="lnblofhighinput">
                         </div>
                     </div>
                 </div>
