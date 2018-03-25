@@ -4,7 +4,6 @@ from time import sleep
 
 from celery import task, current_task
 from celery.result import AsyncResult
-# from django.http import HttpResponse
 from configobj import ConfigObj
 from django import template
 from django.contrib.auth.decorators import login_required
@@ -15,7 +14,7 @@ from django.template import loader
 from django.urls import reverse
 
 from app.forms import InterfaceConfigurationForm
-from app.models import Transponders
+from app.models import Satellites
 from .utils.generic import GenericUtils
 
 logger = getLogger(__name__)
@@ -85,16 +84,16 @@ def channels(request):
 
 # page: transponders
 @login_required(login_url="login/")
-def transponders(request):
+def sats(request):
     """
 
     :param request:
     :return: HttpResponse
     """
     context = {
-        'transponders': Transponders.objects.all(),
+        'sats': Satellites.objects.all(),
     }
-    template = loader.get_template('app/transponders.html')
+    template = loader.get_template('app/satellites.html')
     return HttpResponse(template.render(context, request))
 
 
@@ -149,8 +148,9 @@ def init_work(request):
     job = do_work.delay()
     return HttpResponseRedirect(reverse('poll_state') + '?job=' + job.id)
 
+
 @login_required(login_url="login/")
-def transponders_ajax(request):
+def sats_ajax(request):
     """
 
     :param request:
@@ -162,40 +162,65 @@ def transponders_ajax(request):
             if data == "update":
                 # get the list from /usr/share/dvb/dvb-s
                 gen = GenericUtils()
-                transpon_from_files = gen.transponder_list()
+                transpon_from_files = gen.sats_list()
 
                 # Delete all entries in the db
                 cursor = connection.cursor()
-                cursor.execute("TRUNCATE TABLE `app_transponders`")
+                cursor.execute("TRUNCATE TABLE `app_satellites`")
 
                 # Populate the table with all file names and file content
                 for tr in transpon_from_files:
-                    Transponders(name=tr, config=gen.read_sat_config(tr)).save()
+                    Satellites(name=tr, config=gen.read_sat_config(tr)).save()
+                    print(tr)
             elif data == "delete":
                 transponder_name = request.POST['element']
                 # Delete
                 #print(transponder_name)
-                Transponders.objects.filter(name=transponder_name).delete()
+                Satellites.objects.filter(name=transponder_name).delete()
             return HttpResponse(data)
     return render(request)
+
 
 @login_required(login_url="login/")
 def post_config_ajax(request):
     """
-
+    post_config_ajax
     :param request:
     :return: HttpResponse
     """
     if request.method == 'POST':
         if request.is_ajax():
-            data = request.POST['config']
-            print(data)
+            interfacenum = request.POST['interfacenum']
+            satselect = request.POST['satellitesselect']
+            satcustom = request.POST['satellitesinput']
+            si = request.POST['satellitesinput']
+            dss = request.POST['deliverysystemselect']
+            fi = request.POST['frequencyinput']
+            symi = request.POST['symrateinput']
+            pol = request.POST['polarizationselect']
+            mod = request.POST['modulationselect']
+            fec = request.POST['fecselect']
+            rol = request.POST['rolloffselect']
+            pilot = request.POST['pilotselect']
+            lnbtype = request.POST['lnbtypeselect']
+            lnblofstd = request.POST['lnblofstandardinput']
+            lnblof = request.POST['lnblofinput']
+            lnbloflow = request.POST['lnbloflowinput']
+            lnblofhigh = request.POST['lnblofhighinput']
 
-        return HttpResponse(data)
+            if satselect == "default":
+                # Custom sat
+                print(satcustom)
+            else:
+                # Preset sat
+                print(satselect)
+            print("from:" + interfacenum)
+        return HttpResponse(request)
     else:
         context = {}
         tmp = loader.get_template('app/page_404.html')
         return HttpResponse(tmp.render(context, request))
+
 
 # page: interfaces
 @login_required(login_url="login/")
@@ -206,9 +231,10 @@ def interfaces(request):
     :return: HttpResponse
     """
     form = InterfaceConfigurationForm()
+    print(form.fields)
     context = {
-        'transponders': Transponders.objects.all(),
-        'form': form
+        'satellites': Satellites.objects.all(),
+        'form': form,
     }
     template = loader.get_template('app/interfaces.html')
     return HttpResponse(template.render(context, request))

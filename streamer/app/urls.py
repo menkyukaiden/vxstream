@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^channels', app_views.channels, name='channels'),
 
     # Channels page
-    url(r'^transponders', app_views.transponders, name='transponders'),
+    url(r'^sats', app_views.sats, name='sats'),
 
     # Profile page
     url(r'^profile', app_views.profile, name='profile'),
@@ -35,7 +35,7 @@ urlpatterns = [
 
     url(r'^init_work$', app_views.init_work),
     url(r'^poll_state$', app_views.poll_state, name="poll_state"),
-    url(r'^ajax/refresh_dvb_list/$', app_views.transponders_ajax, name='transponders_ajax'),
+    url(r'^ajax/refresh_dvb_list/$', app_views.sats_ajax, name='sats_ajax'),
     url(r'^ajax/post_config/$', app_views.post_config_ajax, name='post_config_ajax'),
 
 ]

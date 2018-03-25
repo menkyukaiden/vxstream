@@ -14,13 +14,14 @@ class Transponders(models.Model):
 
 class Satellites(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True, unique=True)
+    config = models.TextField(default="hello")
 
     def __str__(self):
         return self.name
 
 
 class InterfaceConfiguration(models.Model):
-
+    #interface_id        =  models.ForeignKey(InterfaceProperties)
     sat_name            = models.CharField(max_length=200, null=False,)
     delivery_system     = models.CharField(max_length=5, null=False,)
     frequency           = models.PositiveIntegerField()
@@ -39,4 +40,12 @@ class InterfaceConfiguration(models.Model):
     def __str__(self):
         return self.sat_name
 
+
+class InterfaceProperties(models.Model):
+
+    interface_id = models.DecimalField(max_digits=10,decimal_places=2, null=False)
+    interface_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.interface_name
 
