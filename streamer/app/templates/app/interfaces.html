@@ -12,7 +12,6 @@
 {% endblock stylesheets %}
 
 {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
-
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
@@ -20,7 +19,8 @@
         <div class="row top_tiles">
             <h1>Interface</h1>
             <h4>Manage DVB interfaces</h4>
-            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            <div id="mod0" class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <input type="hidden" name="interface" value="1">
                 <div class="tile-stats">
                     <div class="icon"><i class="fa fa-youtube-play"></i></div>
                     <span class="label label-success">Streaming</span>
@@ -29,7 +29,7 @@
                     <h3>Apstar6_C-134.0E</h3>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="ln_solid"></div>
-                        <button type="button" class="btn btn-info" data-target="#config-modal" data-toggle="modal"><i class="fa fa-folder"></i> Config</button>
+                        <button type="button" class="btn btn-info config-button" data-target="#config-modal" data-toggle="modal" value="1"><i class="fa fa-folder"></i> Config</button>
 
                         <button type="button" class="btn btn-primary" data-target="#scan-modal" data-toggle="modal"><i class="fa fa-caret-square-o-right"></i> Scan</button>
 
@@ -37,19 +37,39 @@
                         <button type="button" class="btn btn-danger" data-target="#stop-modal" data-toggle="modal"><i class="fa fa-times-circle"></i> Stop</button>
                     </div>
                 </div>
-                <!-- Scan modal -->
-                {% include 'app/scan_modal.html' %}
 
-                <!-- Config modal -->
-                {% include 'app/config_modal.html' %}
+            </div>
+            <div id="mod1" class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <input type="hidden" name="interface" value="2">
+                <div class="tile-stats">
+                    <div class="icon"><i class="fa fa-youtube-play"></i></div>
+                    <span class="label label-success">Streaming</span>
 
-                <!-- Stream modal -->
-                {% include 'app/stream_modal.html' %}
+                    <div class="count">#2. DVB S2 DUAL</div>
+                    <h3>Apstar6_C-134.0E</h3>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="ln_solid"></div>
+                        <button type="button" class="btn btn-info config-button" data-target="#config-modal" data-toggle="modal" value="2"><i class="fa fa-folder"></i> Config</button>
 
-                <!-- Stop modal -->
-                {% include 'app/stop_modal.html' %}
+                        <button type="button" class="btn btn-primary" data-target="#scan-modal" data-toggle="modal"><i class="fa fa-caret-square-o-right"></i> Scan</button>
+
+                        <button type="button" class="btn btn-dark" data-target="#stream-modal" data-toggle="modal"><i class="fa fa-video-camera"></i> Stream</button>
+                        <button type="button" class="btn btn-danger" data-target="#stop-modal" data-toggle="modal"><i class="fa fa-times-circle"></i> Stop</button>
+                    </div>
+                </div>
             </div>
 
+            <!-- Scan modal -->
+            {% include 'app/scan_modal.html' %}
+
+            <!-- Config modal -->
+            {% include 'app/config_modal.html' %}
+
+            <!-- Stream modal -->
+            {% include 'app/stream_modal.html' %}
+
+            <!-- Stop modal -->
+            {% include 'app/stop_modal.html' %}
         </div>
 
     </div>
@@ -69,13 +89,16 @@ $(document).ready(function(){
     /***************************************************************************************/
     $('.start-scan-button').prop('disabled', true);
     $('.disable-default-ffj').prop('required', true);
+
     $('.interface-scan-select').on('change', function(){
         var value = $(this).val();
         console.log(value);
         if (value == "default"){
             $('.disable-default-ffj').prop('disabled', false);
             $('.disable-default-ffj').prop('required', true);
+            $('.custom-configuration').fadeIn();
         }else{
+            $('.custom-configuration').fadeOut();
             $('.disable-default-ffj').prop('disabled', true);
             $('.start-scan-button').prop('disabled', false);
         }
@@ -116,19 +139,6 @@ $(document).ready(function(){
         evt.preventDefault()
         var $formdata = $(this).serialize()
         var $thisURL = $myscanform.attr("data-url") || window.location.href
-        console.log($formdata)
-        console.log($thisURL)
-
-        var text = 'Configuration saved ';
-        text += $( ".select2_single option:selected" ).val();
-        console.log(text);
-        new PNotify({
-            title: 'configuration saved',
-            text: text,
-            type: 'success',
-            styling: 'bootstrap3'
-        });
-
         $('.start-scan-button').text('Started')
         $('.start-scan-button').prop('disabled', true)
         $('.modal').on('hidden', function(){
@@ -142,36 +152,17 @@ $(document).ready(function(){
 
     /**********************************     LNB    *******************************************/
     $('.lnb_disable').prop('disabled', true);
-    $('#lnb_type').on('change', function(){
+    $('#lnbtypeselect').on('change', function(){
         var value = $(this).val();
         console.log(value);
         if (value == "universal"){
             $('.lnb_disable').prop('disabled', true);
             $('.lnb_lof_standard').prop('disabled', false);
-
-            lnb_lof_standard
         }else{
             $('.lnb_disable').prop('disabled', false);
             $('.lnb_lof_standard').prop('disabled', true);
         }
     });
-
-        /* config form */
-    var frm = $('#interface-config-form');
-    frm.submit(function () {
-
-    $.post("{% url 'post_config_ajax' %}", {'config': frm.serialize(), 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(data) {
-        new PNotify({
-         title: 'DVB interfaces',
-         text: 'The Transponder was deleted',
-         type: 'danger',
-         styling: 'bootstrap3'
-        });
-    });
-
-    });
-
-
 
 });
 
@@ -184,6 +175,8 @@ $(document).ready(function(){
             //console.log("xxxxxxxxxxxxx");
        })
        .on('hidden.bs.modal', function(){
+           $('#interface-config-form').trigger("reset");
+           $('.custom-configuration').show();
            //console.log('hidden');
        })
        .on('show.bs.modal', function() {
@@ -193,11 +186,61 @@ $(document).ready(function(){
 
        })
        .on('shown.bs.modal', function(){
+
           //console.log('shown' );
        });
 
+/******************* AJAX modal config ********************/
+$(document).on('submit', '#interface-config-form', function(e){
+    e.preventDefault();
+    var text = 'Configuration saved ';
+    text += $( ".select2_single option:selected" ).val();
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'post_config_ajax' %}",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            satellitesselect: $("#satellitesselect").val(),
+            satellitesinput: $("#satellitesinput").val(),
+            deliverysystemselect: $("#deliverysystemselect").val(),
+            frequencyinput: $("#frequencyinput").val(),
+            symrateinput: $("#symrateinput").val(),
+            polarizationselect: $("#polarizationselect").val(),
+            modulationselect: $("#modulationselect").val(),
+            fecselect: $("#fecselect").val(),
+            rolloffselect: $("#rolloffselect").val(),
+            pilotselect: $("#pilotselect").val(),
+            lnbtypeselect: $("#lnbtypeselect").val(),
+            lnblofstandardinput: $("#lnblofstandardinput").val(),
+            lnblofinput: $("#lnblofinput").val(),
+            lnbloflowinput: $("#lnbloflowinput").val(),
+            lnblofhighinput: $("#lnblofhighinput").val(),
 
 
+        },
+        success: function(){
+                new PNotify({
+                    title: 'configuration saved',
+                    text: text,
+                    type: 'success',
+                    styling: 'bootstrap3'
+                });
+        },
+        error: function(jqXHR, status, error){
+                new PNotify({
+                    title: 'Internal Error',
+                    text: "An internal error occured during saving",
+                    type: 'error',
+                    styling: 'bootstrap3'
+                });
+        },
+    });
+});
+
+$('.config-button').click(function (){
+    var test = this.value;
+    console.log(test)
+});
 
 
 
