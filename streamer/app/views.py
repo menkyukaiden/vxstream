@@ -14,7 +14,7 @@ from django.template import loader
 from django.urls import reverse
 
 from app.forms import InterfaceConfigurationForm
-from app.models import Satellites
+from app.models import Satellites, InterfaceProperties
 from .utils.generic import GenericUtils
 
 logger = getLogger(__name__)
@@ -218,8 +218,8 @@ def post_config_ajax(request):
         return HttpResponse(request)
     else:
         context = {}
-        tmp = loader.get_template('app/page_404.html')
-        return HttpResponse(tmp.render(context, request))
+        tpl = loader.get_template('app/page_404.html')
+        return HttpResponse(tpl.render(context, request))
 
 
 # page: interfaces
@@ -231,10 +231,13 @@ def interfaces(request):
     :return: HttpResponse
     """
     form = InterfaceConfigurationForm()
-    print(form.fields)
+    #print(form.fields)
+    dvb_int = InterfaceProperties.objects.all()
+    satellites = Satellites.objects.all()
     context = {
-        'satellites': Satellites.objects.all(),
+        'satellites': satellites,
         'form': form,
+        'dvb_int': dvb_int,
     }
-    template = loader.get_template('app/interfaces.html')
-    return HttpResponse(template.render(context, request))
+    tpl = loader.get_template('app/interfaces.html')
+    return HttpResponse(tpl.render(context, request))
