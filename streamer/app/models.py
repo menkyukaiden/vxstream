@@ -43,7 +43,6 @@ class InterfaceConfiguration(models.Model):
 
 class InterfaceProperties(models.Model):
 
-    interface_id = models.DecimalField(max_digits=10,decimal_places=2, null=False)
     interface_name = models.CharField(max_length=100)
 
     def __str__(self):
