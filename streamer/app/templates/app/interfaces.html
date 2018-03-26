@@ -15,21 +15,22 @@
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
-
+forloop.counter
         <div class="row top_tiles">
             <h1>Interface</h1>
             <h4>Manage DVB interfaces</h4>
-            <div id="mod0" class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+            {% for dvbint in dvb_int%}
+            <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <input type="hidden" name="interface" value="1">
                 <div class="tile-stats">
                     <div class="icon"><i class="fa fa-youtube-play"></i></div>
                     <span class="label label-success">Streaming</span>
 
-                    <div class="count">#1. DVB S2 DUAL</div>
+                    <div class="count">{{ dvbint }}</div>
                     <h3>Apstar6_C-134.0E</h3>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="ln_solid"></div>
-                        <button type="button" class="btn btn-info config-button" data-target="#config-modal" data-toggle="modal" value="1"><i class="fa fa-folder"></i> Config</button>
+                        <button type="button" class="btn btn-info config-button" data-target="#config-modal" data-toggle="modal" value="{{forloop.counter}}"><i class="fa fa-folder"></i> Config</button>
 
                         <button type="button" class="btn btn-primary" data-target="#scan-modal" data-toggle="modal"><i class="fa fa-caret-square-o-right"></i> Scan</button>
 
@@ -39,25 +40,8 @@
                 </div>
 
             </div>
-            <div id="mod1" class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <input type="hidden" name="interface" value="2">
-                <div class="tile-stats">
-                    <div class="icon"><i class="fa fa-youtube-play"></i></div>
-                    <span class="label label-success">Streaming</span>
+            {% endfor %}
 
-                    <div class="count">#2. DVB S2 DUAL</div>
-                    <h3>Apstar6_C-134.0E</h3>
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="ln_solid"></div>
-                        <button type="button" class="btn btn-info config-button" data-target="#config-modal" data-toggle="modal" value="2"><i class="fa fa-folder"></i> Config</button>
-
-                        <button type="button" class="btn btn-primary" data-target="#scan-modal" data-toggle="modal"><i class="fa fa-caret-square-o-right"></i> Scan</button>
-
-                        <button type="button" class="btn btn-dark" data-target="#stream-modal" data-toggle="modal"><i class="fa fa-video-camera"></i> Stream</button>
-                        <button type="button" class="btn btn-danger" data-target="#stop-modal" data-toggle="modal"><i class="fa fa-times-circle"></i> Stop</button>
-                    </div>
-                </div>
-            </div>
 
             <!-- Scan modal -->
             {% include 'app/scan_modal.html' %}
@@ -167,11 +151,13 @@ $(document).ready(function(){
 });
 
 
-    /* modal */
+    /**********************************     modal    *******************************************/
     $( '.modal' )
        .on('hide.bs.modal', function() {
            $('.interface-scan-select').prop('selectedIndex',0);
-           $(this).data('modal', null);
+           //$(this).data('modal', null);
+           /* remove hidden field */
+           $('#foo').remove();
             //console.log("xxxxxxxxxxxxx");
        })
        .on('hidden.bs.modal', function(){
@@ -183,6 +169,8 @@ $(document).ready(function(){
            //console.log('show');
            $('.disable-default-ffj').prop('disabled', false);
            $('.start-scan-button').prop('disabled', true);
+           $('.save-config-button').prop('disabled', false);
+           $('.save-config-button').text('Save');
 
        })
        .on('shown.bs.modal', function(){
@@ -193,6 +181,7 @@ $(document).ready(function(){
 /******************* AJAX modal config ********************/
 $(document).on('submit', '#interface-config-form', function(e){
     e.preventDefault();
+
     var text = 'Configuration saved ';
     text += $( ".select2_single option:selected" ).val();
     $.ajax({
@@ -200,6 +189,7 @@ $(document).on('submit', '#interface-config-form', function(e){
         url: "{% url 'post_config_ajax' %}",
         data: {
             csrfmiddlewaretoken: '{{ csrf_token }}',
+            interfacenum: $("#foo").val(),
             satellitesselect: $("#satellitesselect").val(),
             satellitesinput: $("#satellitesinput").val(),
             deliverysystemselect: $("#deliverysystemselect").val(),
@@ -215,10 +205,10 @@ $(document).on('submit', '#interface-config-form', function(e){
             lnblofinput: $("#lnblofinput").val(),
             lnbloflowinput: $("#lnbloflowinput").val(),
             lnblofhighinput: $("#lnblofhighinput").val(),
-
-
         },
         success: function(){
+                $('.save-config-button').prop('disabled', true);
+                $('.save-config-button').text('Saved');
                 new PNotify({
                     title: 'configuration saved',
                     text: text,
@@ -238,8 +228,13 @@ $(document).on('submit', '#interface-config-form', function(e){
 });
 
 $('.config-button').click(function (){
-    var test = this.value;
-    console.log(test)
+    var interface_num = this.value;
+    var $intrem = $('<input>').attr({
+        type: 'hidden',
+        id: 'foo',
+        name: 'bar',
+        value: interface_num,
+    }).appendTo('#interface-config-form');
 });
 
 
