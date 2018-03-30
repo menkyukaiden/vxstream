@@ -13,7 +13,6 @@ from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 
-from app.forms import InterfaceConfigurationForm
 from app.models import Satellites, InterfaceProperties
 from .utils.generic import GenericUtils
 
@@ -230,14 +229,14 @@ def interfaces(request):
     :param request:
     :return: HttpResponse
     """
-    form = InterfaceConfigurationForm()
-    #print(form.fields)
+
     dvb_int = InterfaceProperties.objects.all()
     satellites = Satellites.objects.all()
+
     context = {
         'satellites': satellites,
-        'form': form,
         'dvb_int': dvb_int,
     }
+
     tpl = loader.get_template('app/interfaces.html')
     return HttpResponse(tpl.render(context, request))

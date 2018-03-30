@@ -15,7 +15,6 @@
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
-forloop.counter
         <div class="row top_tiles">
             <h1>Interface</h1>
             <h4>Manage DVB interfaces</h4>
@@ -42,20 +41,15 @@ forloop.counter
             </div>
             {% endfor %}
 
-
             <!-- Scan modal -->
             {% include 'app/scan_modal.html' %}
-
             <!-- Config modal -->
             {% include 'app/config_modal.html' %}
-
             <!-- Stream modal -->
             {% include 'app/stream_modal.html' %}
-
             <!-- Stop modal -->
             {% include 'app/stop_modal.html' %}
         </div>
-
     </div>
 </div>
 {% endblock content %}
@@ -70,10 +64,8 @@ forloop.counter
 <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
 <script>
 $(document).ready(function(){
-    /***************************************************************************************/
     $('.start-scan-button').prop('disabled', true);
     $('.disable-default-ffj').prop('required', true);
-
     $('.interface-scan-select').on('change', function(){
         var value = $(this).val();
         console.log(value);
@@ -87,7 +79,6 @@ $(document).ready(function(){
             $('.start-scan-button').prop('disabled', false);
         }
     });
-
     var $myscanform = $(".scan-form")
     $myscanform.submit(function(evt){
         evt.preventDefault()
@@ -112,29 +103,27 @@ $(document).ready(function(){
             $(this).data('modal', null);
         });
     });
-
     $('.start-scan-button-first').on('click', function(){
         $('.start-scan-button').text('Start')
     });
 
-    /**************************************   config-form   **************************************/
+    /* config-form */
     var $myscanform = $(".config-form")
     $myscanform.submit(function(evt){
         evt.preventDefault()
-        var $formdata = $(this).serialize()
-        var $thisURL = $myscanform.attr("data-url") || window.location.href
+        //var $formdata = $(this).serialize()
+        //var $thisURL = $myscanform.attr("data-url") || window.location.href
         $('.start-scan-button').text('Started')
         $('.start-scan-button').prop('disabled', true)
         $('.modal').on('hidden', function(){
             $(this).data('modal', null);
         });
     });
-
     $('.start-scan-button-first').on('click', function(){
         $('.start-scan-button').text('Start')
     });
 
-    /**********************************     LNB    *******************************************/
+    /* LNB */
     $('.lnb_disable').prop('disabled', true);
     $('#lnbtypeselect').on('change', function(){
         var value = $(this).val();
@@ -147,71 +136,71 @@ $(document).ready(function(){
             $('.lnb_lof_standard').prop('disabled', true);
         }
     });
-
 });
 
-
-    /**********************************     modal    *******************************************/
-    $( '.modal' )
-       .on('hide.bs.modal', function() {
-           $('.interface-scan-select').prop('selectedIndex',0);
-           //$(this).data('modal', null);
-           /* remove hidden field */
-           $('#foo').remove();
-            //console.log("xxxxxxxxxxxxx");
-       })
-       .on('hidden.bs.modal', function(){
+/* Modal */
+$( '.modal' )
+    .on('hide.bs.modal', function() {
+        $('.interface-scan-select').prop('selectedIndex',0);
+        /* remove hidden field */
+        $('#foo').remove();
+    })
+    .on('hidden.bs.modal', function(){
            $('#interface-config-form').trigger("reset");
            $('.custom-configuration').show();
-           //console.log('hidden');
-       })
-       .on('show.bs.modal', function() {
-           //console.log('show');
+    })
+    .on('show.bs.modal', function() {
+
            $('.disable-default-ffj').prop('disabled', false);
            $('.start-scan-button').prop('disabled', true);
            $('.save-config-button').prop('disabled', false);
            $('.save-config-button').text('Save');
+    })
+    .on('shown.bs.modal', function(){
+          //nothing to do here
+    });
 
-       })
-       .on('shown.bs.modal', function(){
-
-          //console.log('shown' );
-       });
-
-/******************* AJAX modal config ********************/
+/* AJAX modal config */
 $(document).on('submit', '#interface-config-form', function(e){
     e.preventDefault();
+    var conf_msg = 'Configuration saved for: ';
+    var err_msg =  'An internal error occured during saving';
 
-    var text = 'Configuration saved ';
-    text += $( ".select2_single option:selected" ).val();
+    if ($("#satellitesselect").val() == "default"){
+        conf_msg += $("#satellitesinput").val();
+    }else {
+        conf_msg += $("#satellitesselect").val();
+    }
+    conf_msg += ' for interface: ';
+    conf_msg += $("#foo").val();
     $.ajax({
         type: 'POST',
         url: "{% url 'post_config_ajax' %}",
         data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            interfacenum: $("#foo").val(),
-            satellitesselect: $("#satellitesselect").val(),
-            satellitesinput: $("#satellitesinput").val(),
-            deliverysystemselect: $("#deliverysystemselect").val(),
-            frequencyinput: $("#frequencyinput").val(),
-            symrateinput: $("#symrateinput").val(),
-            polarizationselect: $("#polarizationselect").val(),
-            modulationselect: $("#modulationselect").val(),
-            fecselect: $("#fecselect").val(),
-            rolloffselect: $("#rolloffselect").val(),
-            pilotselect: $("#pilotselect").val(),
-            lnbtypeselect: $("#lnbtypeselect").val(),
-            lnblofstandardinput: $("#lnblofstandardinput").val(),
-            lnblofinput: $("#lnblofinput").val(),
-            lnbloflowinput: $("#lnbloflowinput").val(),
-            lnblofhighinput: $("#lnblofhighinput").val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                interfacenum: $("#foo").val(),
+                satellitesselect: $("#satellitesselect").val(),
+                satellitesinput: $("#satellitesinput").val(),
+                deliverysystemselect: $("#deliverysystemselect").val(),
+                frequencyinput: $("#frequencyinput").val(),
+                symrateinput: $("#symrateinput").val(),
+                polarizationselect: $("#polarizationselect").val(),
+                modulationselect: $("#modulationselect").val(),
+                fecselect: $("#fecselect").val(),
+                rolloffselect: $("#rolloffselect").val(),
+                pilotselect: $("#pilotselect").val(),
+                lnbtypeselect: $("#lnbtypeselect").val(),
+                lnblofstandardinput: $("#lnblofstandardinput").val(),
+                lnblofinput: $("#lnblofinput").val(),
+                lnbloflowinput: $("#lnbloflowinput").val(),
+                lnblofhighinput: $("#lnblofhighinput").val(),
         },
         success: function(){
                 $('.save-config-button').prop('disabled', true);
                 $('.save-config-button').text('Saved');
                 new PNotify({
                     title: 'configuration saved',
-                    text: text,
+                    text: conf_msg,
                     type: 'success',
                     styling: 'bootstrap3'
                 });
@@ -219,7 +208,7 @@ $(document).on('submit', '#interface-config-form', function(e){
         error: function(jqXHR, status, error){
                 new PNotify({
                     title: 'Internal Error',
-                    text: "An internal error occured during saving",
+                    text: err_msg,
                     type: 'error',
                     styling: 'bootstrap3'
                 });
@@ -227,6 +216,7 @@ $(document).on('submit', '#interface-config-form', function(e){
     });
 });
 
+/* Config Button */
 $('.config-button').click(function (){
     var interface_num = this.value;
     var $intrem = $('<input>').attr({
@@ -236,8 +226,5 @@ $('.config-button').click(function (){
         value: interface_num,
     }).appendTo('#interface-config-form');
 });
-
-
-
 </script>
 {% endblock javascripts %}
