@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^poll_state$', app_views.poll_state, name="poll_state"),
     url(r'^ajax/refresh_dvb_list/$', app_views.sats_ajax, name='sats_ajax'),
     url(r'^ajax/post_config/$', app_views.post_config_ajax, name='post_config_ajax'),
+    url(r'ajax/post_interface_config/$', app_views.post_interface_config_ajax, name='post_interface_config_ajax'),
 
 ]
 

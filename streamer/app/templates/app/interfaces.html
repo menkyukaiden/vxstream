@@ -18,6 +18,15 @@
         <div class="row top_tiles">
             <h1>Interface</h1>
             <h4>Manage DVB interfaces</h4>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <button type="button" class="btn btn-dark  btn-round btn-xs addinterface" data-toggle="modal" data-target="#addinter"
+                         data-placement="right" title="View config detail"> ADD INTERFACE
+                         <i class="fa fa-plus"></i>
+                </button>
+            </div>
+
+
+            <div class="row">
             {% for dvbint in dvb_int%}
             <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <input type="hidden" name="interface" value="1">
@@ -27,26 +36,29 @@
 
                     <div class="count">{{ dvbint }}</div>
                     <h3>Apstar6_C-134.0E</h3>
+
+                    <p><span class="label label-primary">Last scan: 30/04/2018 13:43:22 UTC</span></p>
+                    <p><span class="label label-default">Streaming duration: 18d 22h 35m 22s</span></p>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="ln_solid"></div>
-                        <button type="button" class="btn btn-info config-button" data-target="#config-modal" data-toggle="modal" value="{{forloop.counter}}"><i class="fa fa-folder"></i> Config</button>
+                        <button type="button" class="btn btn-info config-button" data-target="#interface-config-modal" data-toggle="modal" value="{{forloop.counter}}"><i class="fa fa-cog"></i> Config</button>
 
                         <button type="button" class="btn btn-primary" data-target="#scan-modal" data-toggle="modal"><i class="fa fa-caret-square-o-right"></i> Scan</button>
 
                         <button type="button" class="btn btn-dark" data-target="#stream-modal" data-toggle="modal"><i class="fa fa-video-camera"></i> Stream</button>
-                        <button type="button" class="btn btn-danger" data-target="#stop-modal" data-toggle="modal"><i class="fa fa-times-circle"></i> Stop</button>
+
                     </div>
                 </div>
 
             </div>
             {% endfor %}
-
+            </div>
             <!-- Scan modal -->
-            {% include 'app/scan_modal.html' %}
+            {% include 'app/interface_scan_modal.html' %}
             <!-- Config modal -->
-            {% include 'app/config_modal.html' %}
+            {% include 'app/interface_config_modal.html' %}
             <!-- Stream modal -->
-            {% include 'app/stream_modal.html' %}
+            {% include 'app/interface_stream_modal.html' %}
             <!-- Stop modal -->
             {% include 'app/stop_modal.html' %}
         </div>
@@ -64,95 +76,32 @@
 <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script>
 <script>
 $(document).ready(function(){
-    $('.start-scan-button').prop('disabled', true);
-    $('.disable-default-ffj').prop('required', true);
-    $('.interface-scan-select').on('change', function(){
-        var value = $(this).val();
-        console.log(value);
-        if (value == "default"){
-            $('.disable-default-ffj').prop('disabled', false);
-            $('.disable-default-ffj').prop('required', true);
-            $('.custom-configuration').fadeIn();
-        }else{
-            $('.custom-configuration').fadeOut();
-            $('.disable-default-ffj').prop('disabled', true);
-            $('.start-scan-button').prop('disabled', false);
-        }
-    });
-    var $myscanform = $(".scan-form")
-    $myscanform.submit(function(evt){
-        evt.preventDefault()
-        var $formdata = $(this).serialize()
-        var $thisURL = $myscanform.attr("data-url") || window.location.href
-        console.log($formdata)
-        console.log($thisURL)
 
-        var text = 'Start Scanning on ';
-        text += $( ".select2_single option:selected" ).val();
-        console.log(text);
-        new PNotify({
-            title: 'Start Scanning on '+$( ".select2_single option:selected" ).val(),
-            text: text,
-            type: 'success',
-            styling: 'bootstrap3'
-        });
 
-        $('.start-scan-button').text('Started')
-        $('.start-scan-button').prop('disabled', true)
-        $('.modal').on('hidden', function(){
-            $(this).data('modal', null);
-        });
-    });
-    $('.start-scan-button-first').on('click', function(){
-        $('.start-scan-button').text('Start')
-    });
+});
 
-    /* config-form */
-    var $myscanform = $(".config-form")
-    $myscanform.submit(function(evt){
-        evt.preventDefault()
-        //var $formdata = $(this).serialize()
-        //var $thisURL = $myscanform.attr("data-url") || window.location.href
-        $('.start-scan-button').text('Started')
-        $('.start-scan-button').prop('disabled', true)
-        $('.modal').on('hidden', function(){
-            $(this).data('modal', null);
-        });
-    });
-    $('.start-scan-button-first').on('click', function(){
-        $('.start-scan-button').text('Start')
-    });
-
-    /* LNB */
-    $('.lnb_disable').prop('disabled', true);
-    $('#lnbtypeselect').on('change', function(){
-        var value = $(this).val();
-        console.log(value);
-        if (value == "universal"){
-            $('.lnb_disable').prop('disabled', true);
-            $('.lnb_lof_standard').prop('disabled', false);
-        }else{
-            $('.lnb_disable').prop('disabled', false);
-            $('.lnb_lof_standard').prop('disabled', true);
-        }
-    });
+/* Config Button */
+$('.config-button').click(function (){
+    var interface_num = this.value;
+    var $intrem = $('<input>').attr({
+        type: 'hidden',
+        id: 'foo',
+        name: 'bar',
+        value: interface_num,
+    }).appendTo('#interface-config-form');
 });
 
 /* Modal */
 $( '.modal' )
     .on('hide.bs.modal', function() {
-        $('.interface-scan-select').prop('selectedIndex',0);
+        $('.interface-select').prop('selectedIndex',0);
         /* remove hidden field */
         $('#foo').remove();
     })
     .on('hidden.bs.modal', function(){
            $('#interface-config-form').trigger("reset");
-           $('.custom-configuration').show();
     })
     .on('show.bs.modal', function() {
-
-           $('.disable-default-ffj').prop('disabled', false);
-           $('.start-scan-button').prop('disabled', true);
            $('.save-config-button').prop('disabled', false);
            $('.save-config-button').text('Save');
     })
@@ -166,29 +115,19 @@ $(document).on('submit', '#interface-config-form', function(e){
     var conf_msg = 'Configuration saved for: ';
     var err_msg =  'An internal error occured during saving';
 
-    if ($("#satellitesselect").val() == "default"){
-        conf_msg += $("#satellitesinput").val();
-    }else {
-        conf_msg += $("#satellitesselect").val();
-    }
+
+    conf_msg += $("#satellitesselect").val();
+
     conf_msg += ' for interface: ';
     conf_msg += $("#foo").val();
+    console.log(conf_msg);
     $.ajax({
         type: 'POST',
-        url: "{% url 'post_config_ajax' %}",
+        url: "{% url 'post_interface_config_ajax' %}",
         data: {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 interfacenum: $("#foo").val(),
                 satellitesselect: $("#satellitesselect").val(),
-                satellitesinput: $("#satellitesinput").val(),
-                deliverysystemselect: $("#deliverysystemselect").val(),
-                frequencyinput: $("#frequencyinput").val(),
-                symrateinput: $("#symrateinput").val(),
-                polarizationselect: $("#polarizationselect").val(),
-                modulationselect: $("#modulationselect").val(),
-                fecselect: $("#fecselect").val(),
-                rolloffselect: $("#rolloffselect").val(),
-                pilotselect: $("#pilotselect").val(),
                 lnbtypeselect: $("#lnbtypeselect").val(),
                 lnblofstandardinput: $("#lnblofstandardinput").val(),
                 lnblofinput: $("#lnblofinput").val(),
@@ -214,17 +153,6 @@ $(document).on('submit', '#interface-config-form', function(e){
                 });
         },
     });
-});
-
-/* Config Button */
-$('.config-button').click(function (){
-    var interface_num = this.value;
-    var $intrem = $('<input>').attr({
-        type: 'hidden',
-        id: 'foo',
-        name: 'bar',
-        value: interface_num,
-    }).appendTo('#interface-config-form');
 });
 </script>
 {% endblock javascripts %}

@@ -13,7 +13,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 
-from app.models import Satellites, InterfaceProperties
+from app.models import Satellites, InterfaceProprieties
 from .utils.generic import GenericUtils
 
 logger = getLogger(__name__)
@@ -32,7 +32,7 @@ def index(request):
     template = loader.get_template('app/home.html')
     return HttpResponse(template.render(context, request))
 
-# all html templates (for dev)
+# all html templates (for dev) TODO: remove
 def all_html(request):
     context = {}
     # The template to be loaded as per gentelella.
@@ -44,7 +44,7 @@ def all_html(request):
     return HttpResponse(template.render(context, request))
 
 
-# page: channels
+# page: channels TODO: remove hardcoded path from here
 @login_required(login_url="login/")
 def channels(request):
     freq_list = []
@@ -81,7 +81,7 @@ def channels(request):
     return HttpResponse(template.render(context, request))
 
 
-# page: transponders
+# page: satellites
 @login_required(login_url="login/")
 def sats(request):
     """
@@ -96,6 +96,7 @@ def sats(request):
     return HttpResponse(template.render(context, request))
 
 
+# page: 404
 def error_404(request):
     """
     error_404
@@ -189,30 +190,44 @@ def post_config_ajax(request):
     """
     if request.method == 'POST':
         if request.is_ajax():
+            sat = request.POST['satellitesinput']
+            delivery = request.POST['deliverysystemselect']
+            freq = request.POST['frequencyinput']
+            symrate = request.POST['symrateinput']
+            polarization = request.POST['polarizationselect']
+            modulation = request.POST['modulationselect']
+            fec = request.POST['fecselect']
+            rolloff = request.POST['rolloffselect']
+            pilot = request.POST['pilotselect']
+
+            print(sat)
+
+        return HttpResponse(request)
+    else:
+        context = {}
+        tpl = loader.get_template('app/page_404.html')
+        return HttpResponse(tpl.render(context, request))
+
+
+@login_required(login_url="login/")
+def post_interface_config_ajax(request):
+    """
+    post_interface_config_ajax
+    :param request:
+    :return: HttpResponse
+    """
+    if request.method == 'POST':
+        if request.is_ajax():
             interfacenum = request.POST['interfacenum']
             satselect = request.POST['satellitesselect']
-            satcustom = request.POST['satellitesinput']
-            si = request.POST['satellitesinput']
-            dss = request.POST['deliverysystemselect']
-            fi = request.POST['frequencyinput']
-            symi = request.POST['symrateinput']
-            pol = request.POST['polarizationselect']
-            mod = request.POST['modulationselect']
-            fec = request.POST['fecselect']
-            rol = request.POST['rolloffselect']
-            pilot = request.POST['pilotselect']
+
             lnbtype = request.POST['lnbtypeselect']
             lnblofstd = request.POST['lnblofstandardinput']
             lnblof = request.POST['lnblofinput']
             lnbloflow = request.POST['lnbloflowinput']
             lnblofhigh = request.POST['lnblofhighinput']
 
-            if satselect == "default":
-                # Custom sat
-                print(satcustom)
-            else:
-                # Preset sat
-                print(satselect)
+            print(satselect)
             print("from:" + interfacenum)
         return HttpResponse(request)
     else:
@@ -230,7 +245,7 @@ def interfaces(request):
     :return: HttpResponse
     """
 
-    dvb_int = InterfaceProperties.objects.all()
+    dvb_int = InterfaceProprieties.objects.all()
     satellites = Satellites.objects.all()
 
     context = {
